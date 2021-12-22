@@ -1,0 +1,22 @@
+.createNoteButton {
+  margin-top: 3em;
+}
+
+.createNoteButton:hover {
+  transition: 0.3s !important;
+  transform: scale(0.9) !important;
+}
+
+.createNoteButton:not(:hover) {
+  transition: 0.3s !important;
+}
+
+.applications {
+  color: "black" !important;
+  text-decoration: "none";
+  flex: 1;
+  cursor: "pointer";
+  align-self: "center";
+  font-weight: "800";
+  font-size: "20px";
+}

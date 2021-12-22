@@ -1,0 +1,36 @@
+.main{
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    /* background-image: url('../../../public/LandingscreenBackground.jpg'); */
+    background-position: center;
+    background-size: cover;
+    
+}
+
+
+.login{
+    margin-right: 5em;
+}
+
+.login-btn:not(:hover){
+    transition: 0.8s;
+}
+
+.login-btn:hover{
+
+    transition: 0.3s !important;
+    transform: scale(0.9);
+}
+
+
+
+.signup-btn:not(:hover){
+    transition: 0.8s;
+}
+
+.signup-btn:hover{
+
+    transition: 0.3s !important;
+    transform: scale(0.9);  
+}
