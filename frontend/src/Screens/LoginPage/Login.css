@@ -1,0 +1,21 @@
+.loginMain{
+    text-align: center;
+}
+
+.loginForm{
+    display: inline-block;
+    margin-bottom: auto;
+    margin-top: auto;
+    text-align: center;
+    top: 55% !important;
+    -ms-transform: translateY(-30%);
+    transform: translateY(55%) !important;
+}
+
+.registerHere{
+    text-decoration: underline;   
+}
+
+.regLink{
+    margin-top: 230px !important;
+}

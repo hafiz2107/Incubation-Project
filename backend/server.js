@@ -1,30 +1,37 @@
 const express = require('express')
 const app = express();
-const notes = require('./notes')
+
 const dotenv = require('dotenv')
 const connect = require('./config/db');
+const userRouter = require('./routes/user');
+const bodyParser = require('body-parser');
+const { notFound, errorHandler } = require('./middlewares/errorMiddlewares');
+const PORT = process.env.PORT || 5000
 
 
 dotenv.config()
 // Connecting Database
 connect()
 
-const PORT = process.env.PORT || 5000
-app.get('/', (req, res) => {
-    res.send("the api is running !!!")
+app.use(bodyParser.urlencoded({ extended: false }))
+// parse application/json
+app.use(bodyParser.json())
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*")
+    res.header(
+        "Acess-Control-Allow-Headers",
+        "Origin, X-Requested-Width, Content-Type, Accept, Authorization"
+    );
+    if (req.method === 'OPTIONS') {
+        res.header('Access-Control-Allow-Methods', 'PUT, POST ,PATCH,DELETE, GET')
+        return res.status(200).json({});
+    }
+    next();
 })
+app.use('/api/user', userRouter)
 
-
-app.get('/myapplications', (req, res)=>{
-    res.json(notes)
-})
-
-
-app.get('/api/notes/:id' , (req,res) => {
-    const singleNote = notes.find((n) => n._id === req.params.id)
-    res.send(singleNote)
-})
-
+app.use(notFound)
+app.use(errorHandler)
 
 // Creating a server at localhost 3000
 app.listen(PORT, () => {
