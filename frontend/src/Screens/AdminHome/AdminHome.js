@@ -2,10 +2,9 @@ import React from 'react'
 import { Button, Container, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import Header from '../../components/header/Header'
-import './LandingPage.css'
 
-export const LandingPage = () => {
-
+const AdminHome = () => {
+    const adminLoggedIn = JSON.parse(localStorage.getItem('userDetails'))
     return (
         <>
             <Header />
@@ -13,14 +12,24 @@ export const LandingPage = () => {
                 <Container>
                     <Row>
                         <div>
-                            <h1 className='title'>Welcome To Incubation </h1>
+                            <h1 className='title'>Welcome Admin </h1>
                         </div>
 
 
-                        {localStorage.getItem('userDetails') ?
-                            (<Link to='/myapplications' className='signUp'>
-                                <Button className='signup-btn' >My Applications</Button>
-                            </Link>) :
+                        {adminLoggedIn ?
+                            (
+                                <>
+                                <br />
+                                    <div className='buttonContainer'>
+                                        <Link to='/viewapplications' className='login'>
+                                            <Button className='login-btn' >View Applications</Button>
+                                        </Link>
+                                        <Link to='/recordlist' className='signUp'>
+                                            <Button className='signup-btn' >Record List</Button>
+                                        </Link>
+                                    </div>
+                                </>
+                            ) :
                             (<div className='buttonContainer'>
                                 <Link to='/login' className='login'>
                                     <Button className='login-btn'>Login</Button>
@@ -38,3 +47,5 @@ export const LandingPage = () => {
         </>
     )
 }
+
+export default AdminHome

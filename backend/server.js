@@ -4,6 +4,7 @@ const app = express();
 const dotenv = require('dotenv')
 const connect = require('./config/db');
 const userRouter = require('./routes/user');
+const adminRouter = require('./routes/admin')
 const bodyParser = require('body-parser');
 const { notFound, errorHandler } = require('./middlewares/errorMiddlewares');
 const PORT = process.env.PORT || 5000
@@ -29,7 +30,7 @@ app.use((req, res, next) => {
     next();
 })
 app.use('/api/user', userRouter)
-
+app.use('/api/admin' , adminRouter)
 app.use(notFound)
 app.use(errorHandler)
 

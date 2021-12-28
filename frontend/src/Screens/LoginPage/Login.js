@@ -39,7 +39,7 @@ const Login = () => {
             
             localStorage.setItem('userDetails', JSON.stringify(data))
             setLoading(false);
-            navigate('/')
+            data.isAdmin ? navigate('/adminhome') : navigate('/')
         } catch (err) {
             setError(err.response.data.message)
             setLoading(false);

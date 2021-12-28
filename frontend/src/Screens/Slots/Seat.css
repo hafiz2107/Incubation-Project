@@ -1,0 +1,11 @@
+.seat{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    margin: 15px;
+    /* background-color: rgba(224, 28, 14, 0.795) !important; */
+}
+
+.seatContainer{
+    margin-top: 10em;
+}

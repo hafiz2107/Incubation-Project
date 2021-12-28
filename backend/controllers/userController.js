@@ -27,7 +27,7 @@ module.exports = {
             if (UserToRegister) {
                 res.status(200).json({
                     _id: UserToRegister._id,
-                    name: UserToRegister.name,
+                    name: UserToRegister.userName,
                     email: UserToRegister.email,
                     isAdmin: UserToRegister.isAdmin,
                     pic: UserToRegister.pic,
@@ -50,7 +50,7 @@ module.exports = {
         if (userToLogin && (await userToLogin.matchPassword(password))) {
             res.json({
                 _id: userToLogin._id,
-                name: userToLogin.name,
+                name: userToLogin.userName,
                 email: userToLogin.email,
                 isAdmin: userToLogin.isAdmin,
                 pic: userToLogin.pic,
@@ -130,8 +130,8 @@ module.exports = {
         application.remove({ _id: new ObjectId(req.params.appId) }).then((data) => {
             console.log("the delted data is : ", data)
             res.status(200).json({ data })
-        }).catch((err)=>{
-            console.log("the error in delting file is : ",err);
+        }).catch((err) => {
+            console.log("the error in delting file is : ", err);
         })
     }
 }

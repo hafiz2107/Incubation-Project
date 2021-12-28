@@ -5,6 +5,7 @@ import MainScreen from '../../components/MainScreen/MainScreen';
 import './Application.css'
 import axios from 'axios'
 import Loading from '../../components/Loading/Loading';
+import Header from '../../components/header/Header';
 
 
 
@@ -73,6 +74,7 @@ const Applications = () => {
     }, [deleteStatus])
     return (
         <div>
+            <Header />
             <Container>
                 <MainScreen title='My Applications' />
 

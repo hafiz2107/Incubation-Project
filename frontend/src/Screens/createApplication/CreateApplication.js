@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Button, Col, Container, Form, Row } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import ErrorAlert from '../../components/Error/ErrorAlert'
+import Header from '../../components/header/Header'
 import Loading from '../../components/Loading/Loading'
 import './CreateApplication.css'
 
@@ -76,6 +77,7 @@ const CreateApplication = () => {
 
     return (
         <div>
+            <Header />
             <Container>
                 {error && <ErrorAlert variant=''>{error}</ErrorAlert>}
                 <Form onSubmit={submitHandler}>
