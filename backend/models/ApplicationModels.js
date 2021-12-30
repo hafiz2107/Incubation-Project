@@ -1,13 +1,21 @@
 const mongoose = require('mongoose')
 
 const applicationSchema = mongoose.Schema({
-    userId:{
-        type : mongoose.Types.ObjectId,
-        required : true,
+    userId: {
+        type: mongoose.Types.ObjectId,
+        required: true,
+    },
+    seatId: {
+        type: mongoose.Types.ObjectId,
+        default: null,
     },
     status: {
         type: String,
-        default:"Pending",
+        default: "Pending",
+    },
+    pic: {
+        type: String,
+        required: true,
     },
     name: {
         type: String,
@@ -86,6 +94,6 @@ const applicationSchema = mongoose.Schema({
     }
 )
 
-const application = mongoose.model('Applications' , applicationSchema)
+const application = mongoose.model('Applications', applicationSchema)
 
 module.exports = application

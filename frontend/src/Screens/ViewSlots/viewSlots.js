@@ -1,26 +1,17 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Container, Modal } from 'react-bootstrap'
 import Header from '../../components/header/Header'
-import './Seat.css'
 import axios from 'axios'
-import { useState, useContext, useEffect } from 'react'
-import { ApplicationContext } from '../../Store/ApplicationContext'
-import { useNavigate } from 'react-router-dom'
-import SweetAlert from 'react-bootstrap-sweetalert'
 
-const Seat = () => {
-    const { applicationDetails } = useContext(ApplicationContext)
-    const [seat, setSeat] = useState([])
-    const [singleApp, setSingleApp] = useState({})
-    const [show, setShow] = useState(false)
-    const [alertShow, setAlertShow] = useState(false)
-    const [appToAllot, setAppToAllot] = useState({})
+const ViewSlots = () => {
 
     useEffect(() => {
         fetchSeats()
     }, [])
 
-    const navigate = useNavigate()
+    const [seat, setSeat] = useState([])
+    const [singleApp, setSingleApp] = useState({})
+    const [show, setShow] = useState(false)
 
     const fetchSeats = async () => {
         try {
@@ -32,29 +23,6 @@ const Seat = () => {
         } catch (err) {
             console.log("THe error in fetching seats are : ", err)
         }
-    }
-
-    const handleAddSeat = () => {
-        try {
-            const config = {
-                "Content-Type": "application/json"
-            }
-            const { data } = axios.post('/api/admin/addseat', config)
-            fetchSeats()
-        } catch (err) {
-            console.log("THe error in adding seat : ", err)
-        }
-    }
-
-    const handleSeatAllocation = async (seat) => {
-        const config = {
-            headers: {
-                "Content-Type": "application/json",
-            }
-        }
-        const { data } = await axios.patch('api/admin/allotseat', { seat, applicationDetails }, config)
-        fetchSeats()
-        navigate('/viewapplications')
     }
 
     const handleViewApplication = async (appId) => {
@@ -72,45 +40,23 @@ const Seat = () => {
             console.log("The error is : ", err)
         }
     }
-
     return (
-        <>
+        <div>
             <Header />
             <Container>
-                <Button onClick={handleAddSeat}>Add Seat</Button>
+
                 <div className='seatContainer'>
                     {
                         seat.map((seat, index) => {
                             return (
                                 <>
-                                    <Button key={seat._id} id={seat._id}
-                                        className='seat'
-                                        style={seat.isActive ? { backgroundColor: '#ffffffd1', cursor: 'help' } : { backgroundColor: '' }}
+                                    <Button key={seat._id} id={seat._id} className='seat' title="View Application" disabled={seat.isActive ? false : false} style={seat.isActive ? { backgroundColor: '#ffffffd1', cursor: 'help' } : { backgroundColor: '' }}
                                         onClick={() => {
-                                            seat.isActive ?
-                                                handleViewApplication(seat.applicationId)
-                                                :
-                                                setAlertShow(true);
-                                            setAppToAllot(seat)
+                                            seat.isActive && handleViewApplication(seat.applicationId)
                                         }}
                                     >
                                         {`IN ${index + 1}`}
                                     </Button>
-
-                                    <SweetAlert
-                                        info
-                                        showCancel
-                                        show={alertShow}
-                                        confirmBtnText="Give Seat"
-                                        confirmBtnBsStyle="success"
-                                        cancelBtnBsStyle="danger"
-                                        title="Are you sure?"
-                                        onConfirm={() => handleSeatAllocation(appToAllot)}
-                                        onCancel={() => setAlertShow(false)}
-                                    >
-                                        Are You Sure To allot seat to the user ?
-                                    </SweetAlert>
-
                                 </>
                             )
 
@@ -164,9 +110,8 @@ const Seat = () => {
                 </Modal.Footer>
             </Modal>
 
-
-        </>
+        </div>
     )
 }
 
-export default Seat
+export default ViewSlots

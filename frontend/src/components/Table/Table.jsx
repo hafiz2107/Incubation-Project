@@ -1,14 +1,14 @@
 import axios from 'axios'
 import React, { useState, useEffect, useContext } from 'react'
-import { Badge, Button, Container, Modal, Row, Table } from 'react-bootstrap'
+import { Badge, Button, Modal, Row, Table } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import './Table.css'
-
+import { ApplicationContext } from '../../Store/ApplicationContext'
 
 const ApplicationTable = () => {
 
 
-
+    const { setApplicationDetails } = useContext(ApplicationContext)
     const [apps, setApps] = useState([])
     const [singleApp, setSingleApp] = useState({})
 
@@ -19,7 +19,7 @@ const ApplicationTable = () => {
     const [pendingModal, setPendingModal] = useState(false)
     const [pendingSingleApp, setPendingSingleApp] = useState({})
 
-    const [rejectedApps, setRejectedApps] = useState([])
+
     useEffect(() => {
         fetchApplications()
     }, [setApps])
@@ -133,10 +133,8 @@ const ApplicationTable = () => {
                                                             View Application</td>
                                                     </tr>
                                                 </tbody>
-
                                             </>
                                         )
-
                                     })
                                 }
 
@@ -149,13 +147,23 @@ const ApplicationTable = () => {
                                         </Modal.Header>
                                         <Modal.Body className='text-center'>
                                             {
-                                                Object.keys(singleApp).map(key =>
-                                                    <>
-                                                        <span>
-                                                            <strong style={{ color: 'black', textTransform: 'capitalize', textDecoration: 'underline' }}>{key} </strong> <br /> {singleApp[key]}
-                                                        </span>
-                                                        <hr />
-                                                    </>
+                                                Object.keys(singleApp).map(key => {
+                                                    { console.log(key) }
+                                                    return (
+                                                        key !== 'pic' ?
+                                                            (<>
+                                                                <span>
+                                                                    <strong style={{ color: 'black', textTransform: 'capitalize', textDecoration: 'underline' }}>{key} </strong> <br /> {singleApp[key]}
+                                                                </span>
+                                                                <hr />
+                                                            </>) : (
+                                                                <>
+                                                                    <strong style={{ color: 'black', textTransform: 'capitalize', textDecoration: 'underline' }}>Company Logo</strong> <br />
+                                                                    <img src={singleApp[key]} alt="" style={{ height: '200px' }} /> <hr />
+                                                                </>
+                                                            )
+                                                    )
+                                                }
                                                 )
                                             }
                                         </Modal.Body>
@@ -194,85 +202,105 @@ const ApplicationTable = () => {
                     <h3>
                         <u>Pending Applications</u>
                     </h3>
-                    <Table striped bordered hover>
-                        <thead>
-                            <tr>
-                                <th>Sl No</th>
-                                <th>Application ID</th>
-                                <th>App. Status</th>
-                                <th>Client Name</th>
-                                <th>Client City</th>
-                                <th>Client State</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
+                    {
+                        pendingApps.length > 0 ?
+                            (
+                                <Table striped bordered hover>
+                                    <thead>
+                                        <tr>
+                                            <th>Sl No</th>
+                                            <th>Application ID</th>
+                                            <th>App. Status</th>
+                                            <th>Client Name</th>
+                                            <th>Client City</th>
+                                            <th>Client State</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
 
-                        {
-                            pendingApps.map((app, index) => {
-                                return (
-                                    <>
-                                        <tbody key={app._id}>
-                                            <tr>
-                                                <td>{index + 1}</td>
-                                                <td>{app._id}</td>
-                                                <td>
-                                                    <Badge bg={app.status === 'Pending' ? 'warning' : 'success'}>{app.status}</Badge>
-                                                </td>
-                                                <td>{app.name}</td>
-                                                <td>{app.city}</td>
-                                                <td>{app.state}</td>
-                                                <td style={{ cursor: 'pointer' }}
-                                                    onClick={() => {
-
-                                                        setPendingModal(true);
-                                                        setPendingSingleApp(app)
-                                                    }}>
-                                                    View Application</td>
-                                            </tr>
-                                        </tbody>
-                                    </>
-                                )
-
-                            })
-                        }
-                        {
-                            <Modal show={pendingModal} fullscreen={true} onHide={() => {
-                                setPendingModal(false)
-                            }}>
-                                <Modal.Header closeButton>
-                                    <Modal.Title id="example-custom-modal-styling-title">View Application : {pendingSingleApp._id}</Modal.Title>
-                                </Modal.Header>
-                                <Modal.Body className='text-center'>
                                     {
-                                        Object.keys(pendingSingleApp).map(key =>
-                                            <>
-                                                <span>
-                                                    <strong style={{ color: 'black', textTransform: 'capitalize', textDecoration: 'underline' }}>{key} </strong> <br /> {pendingSingleApp[key]}
-                                                </span>
-                                                <hr />
-                                            </>
-                                        )
+                                        pendingApps.map((app, index) => {
+                                            return (
+                                                <>
+                                                    <tbody key={app._id}>
+                                                        <tr>
+                                                            <td>{index + 1}</td>
+                                                            <td>{app._id}</td>
+                                                            <td>
+                                                                <Badge bg={app.status === 'Pending' ? 'warning' : 'success'}>{app.status}</Badge>
+                                                            </td>
+                                                            <td>{app.name}</td>
+                                                            <td>{app.city}</td>
+                                                            <td>{app.state}</td>
+                                                            <td style={{ cursor: 'pointer' }}
+                                                                onClick={() => {
+
+                                                                    setPendingModal(true);
+                                                                    setPendingSingleApp(app)
+                                                                }}>
+                                                                View Application</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </>
+                                            )
+
+                                        })
                                     }
-                                </Modal.Body>
-                                <Modal.Footer>
+                                    {
+                                        <Modal show={pendingModal} fullscreen={true} onHide={() => {
+                                            setPendingModal(false)
+                                        }}>
+                                            <Modal.Header closeButton>
+                                                <Modal.Title id="example-custom-modal-styling-title">View Application : {pendingSingleApp._id}</Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body className='text-center'>
+                                                {
+                                                    Object.keys(pendingSingleApp).map(key =>
+                                                        <>
+                                                            {
+                                                                key === 'pic' ?
+                                                                    (
+                                                                        <>
+                                                                            <strong style={{ color: 'black', textTransform: 'capitalize', textDecoration: 'underline' }}>Company Logo </strong> <br />
+                                                                            <img src={pendingSingleApp[key]} alt="" style={{height:'200px'}}/>
+                                                                            <hr />
+                                                                        </>
+                                                                    ) :
+                                                                    <>
+                                                                        <span>
+                                                                            <strong style={{ color: 'black', textTransform: 'capitalize', textDecoration: 'underline' }}>{key} </strong> <br /> {pendingSingleApp[key]}
+                                                                        </span>
+                                                                        <hr />
+                                                                    </>
+                                                            }
+
+                                                        </>
+                                                    )
+                                                }
+                                            </Modal.Body>
+                                            <Modal.Footer>
 
 
-                                    <Button variant="primary" onClick={() => {
-                                        setPendingModal(false)
-                                    }}>
-                                        <Link to='/bookslot'>Book Slot</Link>
+                                                <Button variant="primary" onClick={() => {
+                                                    setPendingModal(false)
+                                                    setApplicationDetails(pendingSingleApp)
+                                                }}>
+                                                    <Link to='/bookslot'>Book Slot</Link>
 
-                                    </Button>
+                                                </Button>
 
-                                    <Button variant="secondary" onClick={() => {
-                                        setPendingModal(false)
-                                    }}>
-                                        Close
-                                    </Button>
-                                </Modal.Footer>
-                            </Modal>
-                        }
-                    </Table>
+                                                <Button variant="secondary" onClick={() => {
+                                                    setPendingModal(false)
+                                                }}>
+                                                    Close
+                                                </Button>
+                                            </Modal.Footer>
+                                        </Modal>
+                                    }
+                                </Table>
+                            ) :
+                            <h3 style={{ color: 'red' }}>No Applications</h3>
+                    }
                 </div>
             </Row>
         </>

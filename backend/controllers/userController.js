@@ -2,14 +2,16 @@ const asyncHandler = require('express-async-handler');
 const { User, match } = require('../models/userModels');
 const application = require('../models/ApplicationModels')
 const generateToken = require('../utils/generateToken');
+
 var ObjectId = require('mongoose').Types.ObjectId;
+const Seats = require('../models/seatModel');
 
 
 
 module.exports = {
     registerUser: asyncHandler(async (req, res) => {
 
-        const { userName, email, password, pic } = req.body;
+        const { userName, email, password } = req.body;
 
         const userExist = await User.findOne({ email })
 
@@ -21,7 +23,6 @@ module.exports = {
                 userName,
                 email,
                 password,
-                pic,
             })
 
             if (UserToRegister) {
@@ -30,7 +31,6 @@ module.exports = {
                     name: UserToRegister.userName,
                     email: UserToRegister.email,
                     isAdmin: UserToRegister.isAdmin,
-                    pic: UserToRegister.pic,
                     token: generateToken(UserToRegister._id)
                 })
             } else {
@@ -68,6 +68,7 @@ module.exports = {
             name,
             address,
             city,
+            pic,
             state,
             email,
             phoneno,
@@ -88,6 +89,7 @@ module.exports = {
         const newApplication = await application.create({
             userId,
             name,
+            pic,
             address,
             city,
             state,
@@ -125,13 +127,15 @@ module.exports = {
             console.log("the error is : ", err.message)
         })
     },
-    deleteApplication: (req, res) => {
-        console.log("The application to delete : ", req.params.appId)
-        application.remove({ _id: new ObjectId(req.params.appId) }).then((data) => {
-            console.log("the delted data is : ", data)
-            res.status(200).json({ data })
-        }).catch((err) => {
-            console.log("the error in delting file is : ", err);
+    deleteApplication: async (req, res) => {
+        var appToDelete = await application.findOne({ _id: new ObjectId(req.params.appId) })
+        Seats.updateOne({ _id: new ObjectId(appToDelete.seatId) }, { applicationId: null, isActive: false }).then((updatedResult) => {
+            application.remove({ _id: new ObjectId(req.params.appId) }).then((data) => {
+                res.status(200).json({ data })
+            }).catch((err) => {
+                console.log("the error in delting file is : ", err);
+            })
         })
+
     }
 }

@@ -16,4 +16,6 @@ router.route('/fetchpendingapplications').get(adminControllers.fetchPendingApps)
 router.route('/addseat').post(adminControllers.addSeats)
 
 router.route('/fetchseats').get(adminControllers.fetchSeats)
+
+router.route('/allotseat').patch(adminControllers.allotSeat)
 module.exports = router

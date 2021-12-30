@@ -29,6 +29,9 @@ const CreateApplication = () => {
     const [proposal, setProposal] = useState("")
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(false)
+    const [pic, setPic] = useState('')
+    const [picMessage, setPicMessage] = useState(null)
+
 
     const navigate = useNavigate()
     const submitHandler = async (e) => {
@@ -49,6 +52,7 @@ const CreateApplication = () => {
                 city,
                 state,
                 email,
+                pic,
                 phoneno,
                 companyName,
                 team,
@@ -75,6 +79,37 @@ const CreateApplication = () => {
 
     }
 
+    const postDetails = (pics) => {
+        setPicMessage(null)
+        if (!pics) {
+            return setPicMessage("Please Select an image !")
+        } else {
+            setPicMessage(null)
+            if (pics.type === 'image/jpeg' || pics.type === 'image/jpg' || pics.type === 'image/png') {
+                setLoading(true)
+                const data = new FormData()
+                data.append('file', pics)
+                data.append('upload_preset', 'incubator')
+                data.append('cloud_name', 'hafiz2107')
+                fetch('https://api.cloudinary.com/v1_1/hafiz2107/image/upload', {
+                    method: "post",
+                    body: data,
+                }).then(async (res) => {
+                    const uploadDetails = await res.json()
+                    console.log("The upload details are : ", uploadDetails)
+                    setPic(uploadDetails.url)
+                    setLoading(false)
+                }).catch((err) => {
+                    setLoading(false)
+                    setPicMessage("Server Error !")
+                })
+            } else {
+                return setPicMessage("Not Valid file type")
+            }
+
+        }
+    }
+
     return (
         <div>
             <Header />
@@ -86,7 +121,7 @@ const CreateApplication = () => {
                         <Col className='col-xs-12 col-sm-12 col-md-6'>
                             <Form.Group className="mb-3" controlId="name">
                                 <Form.Label>Name<span className='required'>*</span></Form.Label>
-                                <Form.Control type="text" placeholder="Enter name" value={name} onChange={(e) => {
+                                <Form.Control type="text" placeholder="Enter name" required={true} value={name} onChange={(e) => {
                                     setName(e.target.value)
                                 }} />
                             </Form.Group>
@@ -95,7 +130,7 @@ const CreateApplication = () => {
                         <Col className='col-xs-12 col-sm-12 col-md-6'>
                             <Form.Group className="mb-3" controlId="address">
                                 <Form.Label>Address<span className='required'>*</span></Form.Label>
-                                <Form.Control type="text" placeholder="Enter Address" value={address} onChange={(e) => {
+                                <Form.Control type="text" placeholder="Enter Address" required={true} value={address} onChange={(e) => {
                                     setAddress(e.target.value)
                                 }} />
                             </Form.Group>
@@ -107,7 +142,7 @@ const CreateApplication = () => {
                         <Col className='col-xs-12 col-sm-12 col-md-6'>
                             <Form.Group className="mb-3" controlId="city">
                                 <Form.Label>City<span className='required'>*</span></Form.Label>
-                                <Form.Control type="text" placeholder="Enter City" value={city} onChange={(e) => {
+                                <Form.Control type="text" placeholder="Enter City" required={true} value={city} onChange={(e) => {
                                     setCity(e.target.value)
                                 }} />
                             </Form.Group>
@@ -116,7 +151,7 @@ const CreateApplication = () => {
                         <Col className='col-xs-12 col-sm-12 col-md-6'>
                             <Form.Group className="mb-3" controlId="state">
                                 <Form.Label>State<span className='required'>*</span></Form.Label>
-                                <Form.Control type="text" placeholder="Enter State" value={state} onChange={(e) => {
+                                <Form.Control type="text" placeholder="Enter State" required={true} value={state} onChange={(e) => {
                                     setState(e.target.value)
                                 }} />
                             </Form.Group>
@@ -127,7 +162,7 @@ const CreateApplication = () => {
                         <Col className='col-xs-12 col-sm-12 col-md-6'>
                             <Form.Group className="mb-3" controlId="email">
                                 <Form.Label>Email<span className='required'>*</span></Form.Label>
-                                <Form.Control type="email" placeholder="Enter Email" value={email} onChange={(e) => {
+                                <Form.Control type="email" placeholder="Enter Email" required={true} value={email} onChange={(e) => {
                                     setEmail(e.target.value)
                                 }} />
                             </Form.Group>
@@ -136,7 +171,7 @@ const CreateApplication = () => {
                         <Col className='col-xs-12 col-sm-12 col-md-6'>
                             <Form.Group className="mb-3" controlId="phone">
                                 <Form.Label>Phone No<span className='required'>*</span></Form.Label>
-                                <Form.Control type="tel" placeholder="Enter Phone" value={phoneno} onChange={(e) => {
+                                <Form.Control type="tel" placeholder="Enter Phone" required={true} value={phoneno} onChange={(e) => {
                                     setPhone(e.target.value)
                                 }} />
                             </Form.Group>
@@ -147,7 +182,7 @@ const CreateApplication = () => {
                         <Col className='col-xs-12 col-sm-12 col-md-6'>
                             <Form.Group className="mb-3" controlId="email">
                                 <Form.Label>Company<span className='required'>*</span></Form.Label>
-                                <Form.Control type="text" placeholder="Enter Company name" value={companyName} onChange={(e) => {
+                                <Form.Control type="text" placeholder="Enter Company name" required={true} value={companyName} onChange={(e) => {
                                     setCompanyName(e.target.value)
                                 }} />
                             </Form.Group>
@@ -155,9 +190,12 @@ const CreateApplication = () => {
 
                         {/* Image Here */}
                         <Col className='col-xs-12 col-sm-12 col-md-6'>
-                            <Form.Group controlId="formFile" className="mb-3">
-                                <Form.Label>Company Logo</Form.Label>
-                                <Form.Control type="file" />
+                            <Form.Group controlId="formFile" className="mb-3" onChange={(e) => {
+                                postDetails(e.target.files[0])
+                            }}>
+                                <Form.Label>{loading ? <Loading /> : "Company Logo"}</Form.Label>
+                                
+                                <Form.Control type="file" custom disabled={loading ? true : false} />
                             </Form.Group>
                         </Col>
                     </Row>
@@ -166,7 +204,7 @@ const CreateApplication = () => {
                         <Col>
                             <Form.Group className="mb-3" controlId="team">
                                 <Form.Label>Describe Your Team And Background</Form.Label>
-                                <Form.Control as="textarea" rows={3} value={team} onChange={(e) => {
+                                <Form.Control as="textarea" rows={3} required={true} value={team} onChange={(e) => {
                                     setTeam(e.target.value)
                                 }} />
                             </Form.Group>
@@ -177,7 +215,7 @@ const CreateApplication = () => {
                         <Col>
                             <Form.Group className="mb-3" controlId="products">
                                 <Form.Label>Describe Your Company and Products </Form.Label>
-                                <Form.Control as="textarea" rows={3} value={products} onChange={(e) => {
+                                <Form.Control as="textarea" rows={3} required={true} value={products} onChange={(e) => {
                                     setProducts(e.target.value)
                                 }} />
                             </Form.Group>
@@ -188,7 +226,7 @@ const CreateApplication = () => {
                         <Col>
                             <Form.Group className="mb-3" controlId="problem">
                                 <Form.Label>Describe the problem you are trying to solve</Form.Label>
-                                <Form.Control as="textarea" rows={3} value={problem} onChange={(e) => {
+                                <Form.Control as="textarea" rows={3} required={true} value={problem} onChange={(e) => {
                                     setProblem(e.target.value)
                                 }} />
                             </Form.Group>
@@ -199,7 +237,7 @@ const CreateApplication = () => {
                         <Col>
                             <Form.Group className="mb-3" controlId="uniqueness">
                                 <Form.Label>What is unique about your solution ?</Form.Label>
-                                <Form.Control as="textarea" rows={3} value={solution} onChange={(e) => {
+                                <Form.Control as="textarea" rows={3} required={true} value={solution} onChange={(e) => {
                                     setSolution(e.target.value)
                                 }} />
                             </Form.Group>
@@ -210,7 +248,7 @@ const CreateApplication = () => {
                         <Col>
                             <Form.Group className="mb-3" controlId="problem">
                                 <Form.Label>What is your value propostion for the customer ?</Form.Label>
-                                <Form.Control as="textarea" rows={3} value={value} onChange={(e) => {
+                                <Form.Control as="textarea" rows={3} required={true} value={value} onChange={(e) => {
                                     setValue(e.target.value)
                                 }} />
                             </Form.Group>
@@ -221,7 +259,7 @@ const CreateApplication = () => {
                         <Col>
                             <Form.Group className="mb-3" controlId="competitor">
                                 <Form.Label>Who are your competitors and what is you competetive advantage ?</Form.Label>
-                                <Form.Control as="textarea" rows={3} value={competitors} onChange={(e) => {
+                                <Form.Control as="textarea" rows={3} required={true} value={competitors} onChange={(e) => {
                                     setCompetitors(e.target.value)
                                 }} />
                             </Form.Group>
@@ -232,7 +270,7 @@ const CreateApplication = () => {
                         <Col>
                             <Form.Group className="mb-3" controlId="revenue">
                                 <Form.Label>What is your revenue Model ?</Form.Label>
-                                <Form.Control as="textarea" rows={3} value={revenue} onChange={(e) => {
+                                <Form.Control as="textarea" rows={3} required={true} value={revenue} onChange={(e) => {
                                     setRevenue(e.target.value)
                                 }} />
                             </Form.Group>
@@ -243,7 +281,7 @@ const CreateApplication = () => {
                         <Col>
                             <Form.Group className="mb-3" controlId="marketSize">
                                 <Form.Label>What is the potential market size of your product ?</Form.Label>
-                                <Form.Control as="textarea" rows={3} value={marketSize} onChange={(e) => {
+                                <Form.Control as="textarea" rows={3} required={true} value={marketSize} onChange={(e) => {
                                     setMarketSize(e.target.value)
                                 }} />
                             </Form.Group>
@@ -254,7 +292,7 @@ const CreateApplication = () => {
                         <Col>
                             <Form.Group className="mb-3" controlId="marketSize">
                                 <Form.Label>How do you market or plan to market your products and services ?</Form.Label>
-                                <Form.Control as="textarea" rows={3} value={marketPlan} onChange={(e) => {
+                                <Form.Control as="textarea" rows={3} required={true} value={marketPlan} onChange={(e) => {
                                     setMarketPlan(e.target.value)
                                 }} />
                             </Form.Group>
@@ -293,7 +331,7 @@ const CreateApplication = () => {
                         <Col>
                             <Form.Group className="mb-3" controlId="proposal">
                                 <Form.Label>Detailed buissness Proposal</Form.Label>
-                                <Form.Control as="textarea" rows={3} value={proposal} onChange={(e) => {
+                                <Form.Control as="textarea" rows={3} required={true} value={proposal} onChange={(e) => {
                                     setProposal(e.target.value)
                                 }} />
                             </Form.Group>

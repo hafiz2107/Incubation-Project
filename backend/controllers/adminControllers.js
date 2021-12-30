@@ -8,7 +8,7 @@ module.exports = {
         var apps = await ApplicationModels.find()
         res.status(200).json({ apps })
     },
-    fetchSingleApplication: async (req, res) => {
+        fetchSingleApplication: async (req, res) => {
         var app = await ApplicationModels.findOne({ _id: ObjectId(req.params.appId) })
         res.status(200).json({ app })
     },
@@ -32,5 +32,14 @@ module.exports = {
     fetchSeats: async (req, res) => {
         var data = await SeatModels.find({})
         res.status(200).json({ data })
+    },
+    allotSeat: async (req, res) => {
+        const seatId = req.body.seat._id;
+        const appId = req.body.applicationDetails._id;
+
+        var data = await SeatModels.updateOne({ _id: ObjectId(seatId) }, { $set: { applicationId: appId  , isActive : true} })
+        var updateResult = await ApplicationModels.updateOne({ _id: ObjectId(appId) }, { $set: { status: "Approved", seatId: seatId }})
+        res.status(200).json({data})
     }
 }
+    
