@@ -18,4 +18,6 @@ router.route('/addseat').post(adminControllers.addSeats)
 router.route('/fetchseats').get(adminControllers.fetchSeats)
 
 router.route('/allotseat').patch(adminControllers.allotSeat)
+
+router.route('/deletefromslot').post(adminControllers.deletealottedSeat)
 module.exports = router

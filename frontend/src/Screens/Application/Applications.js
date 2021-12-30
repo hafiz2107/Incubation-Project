@@ -141,8 +141,10 @@ const Applications = () => {
                                                 <Card.Body>
 
                                                     <h4>
-                                                        <Badge bg={apps.status === 'Pending' ? 'danger' : 'success'} size="sm">
+                                                        <Badge bg={apps.status === 'Pending' ? 'info' : apps.status === 'Accepted' ? 'warning' : apps.status === 'Approved' ? 'success' : 'danger'} size="sm">
                                                             {apps.status}
+                                                            {apps.status === 'Approved' && <p>  </p>}
+                                                            {apps.status === 'Approved' ? `Seat No. : ${apps.seatNo}` : ""}
                                                         </Badge>
                                                     </h4>
                                                     <p>Created At : {apps.createdAt.slice(0, 10)}</p>

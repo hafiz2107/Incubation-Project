@@ -15,7 +15,7 @@ const Seat = () => {
     const [show, setShow] = useState(false)
     const [alertShow, setAlertShow] = useState(false)
     const [appToAllot, setAppToAllot] = useState({})
-
+    const [seatNo, setSeatNo] = useState('')
     useEffect(() => {
         fetchSeats()
     }, [])
@@ -46,13 +46,13 @@ const Seat = () => {
         }
     }
 
-    const handleSeatAllocation = async (seat) => {
+    const handleSeatAllocation = async (seat,seatNo) => {
         const config = {
             headers: {
                 "Content-Type": "application/json",
             }
         }
-        const { data } = await axios.patch('api/admin/allotseat', { seat, applicationDetails }, config)
+        const { data } = await axios.patch('api/admin/allotseat', { seat, applicationDetails ,seatNo}, config)
         fetchSeats()
         navigate('/viewapplications')
     }
@@ -91,7 +91,9 @@ const Seat = () => {
                                                 handleViewApplication(seat.applicationId)
                                                 :
                                                 setAlertShow(true);
-                                            setAppToAllot(seat)
+                                                setAppToAllot(seat);
+                                                setSeatNo(`IN ${index + 1}`)
+
                                         }}
                                     >
                                         {`IN ${index + 1}`}
@@ -105,7 +107,7 @@ const Seat = () => {
                                         confirmBtnBsStyle="success"
                                         cancelBtnBsStyle="danger"
                                         title="Are you sure?"
-                                        onConfirm={() => handleSeatAllocation(appToAllot)}
+                                        onConfirm={() => handleSeatAllocation(appToAllot,seatNo)}
                                         onCancel={() => setAlertShow(false)}
                                     >
                                         Are You Sure To allot seat to the user ?
@@ -126,28 +128,25 @@ const Seat = () => {
                 </Modal.Header>
                 <Modal.Body className='text-center'>
                     {
+
                         Object.keys(singleApp).map(key => {
                             return (
-                                Object.keys(singleApp).map(key => {
-                                    return (
-                                        key !== 'pic' ?
-                                            (<>
-                                                <span>
-                                                    <strong style={{ color: 'black', textTransform: 'capitalize', textDecoration: 'underline' }}>{key} </strong> <br /> {singleApp[key]}
-                                                </span>
-                                                <hr />
-                                            </>) : (
-                                                <>
-                                                    <strong style={{ color: 'black', textTransform: 'capitalize', textDecoration: 'underline' }}>Company Logo</strong> <br />
-                                                    <img src={singleApp[key]} alt="" style={{ height: '200px' }} /> <hr />
-                                                </>
-                                            )
+                                key !== 'pic' ?
+                                    (<>
+                                        <span>
+                                            <strong style={{ color: 'black', textTransform: 'capitalize', textDecoration: 'underline' }}>{key} </strong> <br /> {singleApp[key]}
+                                        </span>
+                                        <hr />
+                                    </>) : (
+                                        <>
+                                            <strong style={{ color: 'black', textTransform: 'capitalize', textDecoration: 'underline' }}>Company Logo</strong> <br />
+                                            <img src={singleApp[key]} alt="" style={{ height: '200px' }} /> <hr />
+                                        </>
                                     )
-                                }
-                                )
                             )
                         }
                         )
+
                     }
                 </Modal.Body>
                 <Modal.Footer>

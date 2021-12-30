@@ -9,6 +9,10 @@ const applicationSchema = mongoose.Schema({
         type: mongoose.Types.ObjectId,
         default: null,
     },
+    seatNo: {
+        type: String,
+        default: null,
+    },
     status: {
         type: String,
         default: "Pending",

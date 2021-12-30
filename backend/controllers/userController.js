@@ -129,7 +129,7 @@ module.exports = {
     },
     deleteApplication: async (req, res) => {
         var appToDelete = await application.findOne({ _id: new ObjectId(req.params.appId) })
-        Seats.updateOne({ _id: new ObjectId(appToDelete.seatId) }, { applicationId: null, isActive: false }).then((updatedResult) => {
+        Seats.updateOne({ _id: new ObjectId(appToDelete.seatId) }, { applicationId: null, isActive: false, seatNumber: null }).then((updatedResult) => {
             application.remove({ _id: new ObjectId(req.params.appId) }).then((data) => {
                 res.status(200).json({ data })
             }).catch((err) => {

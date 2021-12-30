@@ -37,7 +37,6 @@ const ApplicationTable = () => {
 
             if (data.status === 200) {
                 const allApps = data.data.apps
-
                 const newApps = allApps.filter((app) => app.status === 'Pending')
                 const pendingApplications = allApps.filter((app) => app.status === 'Accepted')
                 setNewApps(newApps)
@@ -48,7 +47,6 @@ const ApplicationTable = () => {
             console.log(err)
         }
     }
-
 
     // Function to handle Accept of new Application
     const handleAccept = async (appId) => {
@@ -61,7 +59,6 @@ const ApplicationTable = () => {
 
             const { data } = await axios.patch(`/api/admin/acceptapplication/${appId}`, config)
             fetchApplications()
-
         } catch (err) {
             console.log("the error in updating app is :", err)
         }
@@ -148,7 +145,6 @@ const ApplicationTable = () => {
                                         <Modal.Body className='text-center'>
                                             {
                                                 Object.keys(singleApp).map(key => {
-                                                    { console.log(key) }
                                                     return (
                                                         key !== 'pic' ?
                                                             (<>
@@ -165,6 +161,7 @@ const ApplicationTable = () => {
                                                     )
                                                 }
                                                 )
+
                                             }
                                         </Modal.Body>
                                         <Modal.Footer>
@@ -262,7 +259,7 @@ const ApplicationTable = () => {
                                                                     (
                                                                         <>
                                                                             <strong style={{ color: 'black', textTransform: 'capitalize', textDecoration: 'underline' }}>Company Logo </strong> <br />
-                                                                            <img src={pendingSingleApp[key]} alt="" style={{height:'200px'}}/>
+                                                                            <img src={pendingSingleApp[key]} alt="" style={{ height: '200px' }} />
                                                                             <hr />
                                                                         </>
                                                                     ) :

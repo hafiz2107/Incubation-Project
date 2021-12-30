@@ -5,46 +5,29 @@ import { Link, Navigate, useNavigate } from 'react-router-dom'
 import ErrorAlert from '../../components/Error/ErrorAlert'
 import Loading from '../../components/Loading/Loading'
 import MainScreen from '../../components/MainScreen/MainScreen'
+import UseForm from './UseForm'
+import validateForm from './validateForm'
 
 import './Login.css'
 
 
 const Login = () => {
 
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [error, setError] = useState(false)
-    const [loading, setLoading] = useState(false)
-    
+
+    const { handleChange, values, handleSubmit, formError, error, loading } = UseForm(validateForm)
     const navigate = useNavigate()
 
+
+
     useEffect(() => {
-        setLoading(false);
-    }, [email, password])
-
-    useEffect(()=>{
-        localStorage.getItem('userDetails') ? navigate('/') : navigate('/login');
-    },[])
-
-    const submitHandler = async (e) => {
-        e.preventDefault()
-        try {
-            const config = {
-                headers: {
-                    "Content-type": "application/json"
-                }
-            }
-            setLoading(true)
-            const { data } = await axios.post('/api/user/login', { email, password }, config)
-            
-            localStorage.setItem('userDetails', JSON.stringify(data))
-            setLoading(false);
-            data.isAdmin ? navigate('/adminhome') : navigate('/')
-        } catch (err) {
-            setError(err.response.data.message)
-            setLoading(false);
+        const user = JSON.parse(localStorage.getItem('userDetails'))
+        if (user) {
+            user.isAdmin ? navigate('/adminhome') : navigate('/');
+        } else {
+            navigate('/login')
         }
-    }
+
+    }, [])
 
     return (
         <>
@@ -52,21 +35,22 @@ const Login = () => {
             <div className='loginMain'>
                 <Container>
                     <Form className='loginForm' onSubmit={(e) => {
-                        submitHandler(e)
+                        handleSubmit(e)
                     }}>
                         {error && <ErrorAlert variant=''>{error}</ErrorAlert>}
                         <Form.Group className="mb-3" controlId="formBasicEmail">
                             <Form.Label>Email address</Form.Label>
-                            <Form.Control
+                            <Form.Control  
                                 type="email"
                                 className='loginInputs'
                                 placeholder="Enter email"
-                                value={email}
+                                name='email'
+                                value={values.email}
                                 onChange={(e) => {
-                                    setEmail(e.target.value)
+                                    handleChange(e)
                                 }} />
-                            <Form.Text className="text-muted">
-                                We'll never share your email with anyone else.
+                            <Form.Text className="text-danger">
+                                {formError.email && formError.email}
                             </Form.Text>
                         </Form.Group>
 
@@ -75,11 +59,16 @@ const Login = () => {
                             <Form.Control
                                 type="password"
                                 className='loginInputs'
+                                name="password"
                                 placeholder="Password"
-                                value={password}
+                                value={values.password}
                                 onChange={(e) => {
-                                    setPassword(e.target.value)
+                                    handleChange(e)
                                 }} />
+
+                            <Form.Text className="text-danger">
+                                {formError.password && formError.password}
+                            </Form.Text>
                         </Form.Group>
 
                         <Button variant="primary" type="submit" disabled={loading ? true : false}>

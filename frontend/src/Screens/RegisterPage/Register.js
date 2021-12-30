@@ -6,50 +6,14 @@ import ErrorAlert from '../../components/Error/ErrorAlert'
 import Loading from '../../components/Loading/Loading'
 import MainScreen from '../../components/MainScreen/MainScreen'
 import './Register.css'
+import useForm from './useForm'
+import validateForm from './validateForm'
 
 const Register = () => {
-
-    const [userName, setUserName] = useState("")
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [confirmPassword, setConfirmPassword] = useState("")
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState(false)
-    const [message, setMessage] = useState(null)
+    
     const navigate = useNavigate()
-
-
-
-    useEffect(() => {
-        setMessage(null)
-    }, [confirmPassword])
-
-    const submitHandler = async (e) => {
-        e.preventDefault()
-        if (password !== confirmPassword) {
-            setMessage("Passwords Doesn't match !")
-        } else {
-            setMessage(null)
-            try {
-                const config = {
-                    headers: {
-                        "Content-type": "application/json",
-                    },
-                }
-
-                setLoading(true)
-                const { data } = await axios.post('/api/user', { userName, email, password }, config)
-                setLoading(false)
-                setError(false)
-                localStorage.setItem("userDetails", JSON.stringify(data))
-                navigate('/login')
-            } catch (err) {
-                setError(err.response.data.message)
-                setLoading(false)
-            }
-        }
-
-    }
+    
+    const { handleChange, values, handleSubmit, formError, loading } = useForm(validateForm)
 
 
     return (
@@ -58,10 +22,8 @@ const Register = () => {
             <div className='registermain'>
                 <Container>
                     <Form className='registerForm' onSubmit={(e) => {
-                        submitHandler(e)
+                        handleSubmit(e)
                     }}>
-                        {error && <ErrorAlert variant=''>{error}</ErrorAlert>}
-                        {message && <ErrorAlert variant='danger'>{message}</ErrorAlert>}
 
                         <Form.Group className="mb-3" controlId="formBasicUserName">
                             <Form.Label>User Name</Form.Label>
@@ -69,10 +31,14 @@ const Register = () => {
                                 type="text"
                                 className='loginInputs'
                                 placeholder="Enter Username"
-                                value={userName}
+                                name="username"
+                                value={values.username}
                                 onChange={(e) => {
-                                    setUserName(e.target.value)
+                                    handleChange(e)
                                 }} />
+                            <Form.Text className="text-danger">
+                                {formError.username && formError.username}
+                            </Form.Text>
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -81,12 +47,13 @@ const Register = () => {
                                 type="email"
                                 className='loginInputs'
                                 placeholder="Enter email"
-                                value={email}
+                                name="email"
+                                value={values.email}
                                 onChange={(e) => {
-                                    setEmail(e.target.value)
+                                    handleChange(e)
                                 }} />
-                            <Form.Text className="text-muted">
-                                We'll never share your email with anyone else.
+                            <Form.Text className="text-danger">
+                                {formError.email && formError.email}
                             </Form.Text>
                         </Form.Group>
 
@@ -96,22 +63,30 @@ const Register = () => {
                                 type="password"
                                 className='loginInputs'
                                 placeholder="Password"
-                                value={password}
+                                name="password"
+                                value={values.password}
                                 onChange={(e) => {
-                                    setPassword(e.target.value)
+                                    handleChange(e)
                                 }} />
+                            <Form.Text className="text-danger">
+                                {formError.password && formError.password}
+                            </Form.Text>
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="formBasicConfirmPassword">
-                            <Form.Label>Password</Form.Label>
+                            <Form.Label>Confirm Password</Form.Label>
                             <Form.Control
                                 type="password"
                                 className='loginInputs'
                                 placeholder="Confirm Password"
-                                value={confirmPassword}
+                                name="confirmpassword"
+                                value={values.confirmpassword}
                                 onChange={(e) => {
-                                    setConfirmPassword(e.target.value)
+                                    handleChange(e)
                                 }} />
+                            <Form.Text className="text-danger">
+                                {formError.confirmpassword && formError.confirmpassword}
+                            </Form.Text>
                         </Form.Group>
 
                         <Button variant="primary" type="submit" disabled={loading ? true : false}>
@@ -124,7 +99,6 @@ const Register = () => {
                         </Col>
                     </Row>
                 </Container>
-
             </div>
         </>
     )
